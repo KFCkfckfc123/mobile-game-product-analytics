@@ -1,0 +1,13 @@
+# Raw data is not redistributed (see README, Data sources)
+ab-test-cookie-cats/data/*
+!ab-test-cookie-cats/data/README.md
+*.csv
+!**/results/*.csv
+
+# Python / Jupyter
+__pycache__/
+.ipynb_checkpoints/
+.venv/
+
+# macOS
+.DS_Store
