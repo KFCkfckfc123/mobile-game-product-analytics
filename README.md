@@ -27,6 +27,20 @@ Source: `ab-test-cookie-cats/notebooks/01_ab_test_analysis.ipynb`, sections 1–
   - kept in retention analyses, where one player cannot materially change a proportion of ~45,000;
   - excluded from game-round comparisons, which are reported mainly with medians.
 
+### Cookie Cats: sample ratio check and primary metrics (stage 2)
+
+Source: `ab-test-cookie-cats/notebooks/01_ab_test_analysis.ipynb`, section 3. Decision rules were fixed before the results were viewed: SRM threshold p < 0.001; D7 retention as the primary metric and D1 as secondary; two-sided α = 0.05; differences reported as `gate_40 − gate_30`.
+
+- **Sample ratio mismatch (assuming a 50/50 design):** χ² = 6.902, p = 0.0086. This does not cross the pre-set p < 0.001 threshold, so the analysis proceeds. The result is borderline (it would be flagged at 0.05), and the intended allocation is not documented, so the 789-player gap is reported as a caveat.
+
+| Metric | gate_30 (control) | gate_40 (treatment) | Difference | z | p |
+|---|---:|---:|---:|---:|---:|
+| D7 retention (primary) | 19.02% | 18.20% | −0.82 pp (−4.3% relative) | 3.164 | 0.0016 |
+| D1 retention (secondary) | 44.82% | 44.23% | −0.59 pp | 1.784 | 0.074 |
+
+- **Result:** moving the first gate from level 30 to level 40 is associated with a statistically significant drop in D7 retention. The D1 difference points the same way but is not significant at α = 0.05.
+- **Not yet established:** the size of the effect with a confidence interval, the test's power, and whether the effect holds across engagement segments. These are covered in stage 3.
+
 ## Data sources
 
 - **Cookie Cats:** [Kaggle dataset "Mobile Games A/B Testing - Cookie Cats"](https://www.kaggle.com/datasets/mursideyarkin/mobile-games-ab-testing-cookie-cats), originally from DataCamp; the game is developed by Tactile Entertainment. The dataset page does not state explicit license terms, so the raw CSV is **not** included in this repository. To reproduce, download `cookie_cats.csv` from Kaggle into `ab-test-cookie-cats/data/`.
