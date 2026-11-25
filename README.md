@@ -66,6 +66,17 @@ Source: `ab-test-cookie-cats/notebooks/01_ab_test_analysis.ipynb`, sections 4–
 
   The D7 gap is concentrated among moderately engaged players (30–99 rounds), the band in which players could plausibly reach the first gate. **Caveat:** `sum_gamerounds` is measured after assignment and may itself be affected by the gate position, so players in the same band are not directly comparable across groups. Rounds are also not levels. This breakdown generates hypotheses for a follow-up test; it is not a causal estimate for any segment.
 
+### Cookie Cats: decision
+
+Source: `ab-test-cookie-cats/notebooks/01_ab_test_analysis.ipynb`, section 9.
+
+**Recommendation: keep the first gate at level 30; do not roll out `gate_40`.** Moving the gate reduced D7 retention by 0.82 pp (95% CI 0.34 to 1.35 pp) without changing engagement volume.
+
+Limitations that could change the decision:
+- **No revenue data.** The gate is a monetization point; if `gate_40` increased purchases, the trade-off would need to be re-evaluated.
+- **Borderline sample ratio** (p = 0.0086 against a pre-set 0.001 threshold; intended allocation undocumented).
+- **Short horizon:** only D1, D7, and 14-day game rounds are available.
+
 ## Data sources
 
 - **Cookie Cats:** [Kaggle dataset "Mobile Games A/B Testing - Cookie Cats"](https://www.kaggle.com/datasets/mursideyarkin/mobile-games-ab-testing-cookie-cats), originally from DataCamp; the game is developed by Tactile Entertainment. The dataset page does not state explicit license terms, so the raw CSV is **not** included in this repository. To reproduce, download `cookie_cats.csv` from Kaggle into `ab-test-cookie-cats/data/`.
