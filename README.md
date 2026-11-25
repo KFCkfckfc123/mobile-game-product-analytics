@@ -41,6 +41,31 @@ Source: `ab-test-cookie-cats/notebooks/01_ab_test_analysis.ipynb`, section 3. De
 - **Result:** moving the first gate from level 30 to level 40 is associated with a statistically significant drop in D7 retention. The D1 difference points the same way but is not significant at α = 0.05.
 - **Not yet established:** the size of the effect with a confidence interval, the test's power, and whether the effect holds across engagement segments. These are covered in stage 3.
 
+### Cookie Cats: effect size, power, guardrail, and segments (stage 3)
+
+Source: `ab-test-cookie-cats/notebooks/01_ab_test_analysis.ipynb`, sections 4–5.
+
+- **Effect size (bootstrap, 2,000 resamples within each group, seed 42):** D7 difference (`gate_40 − gate_30`) = −0.83 pp, 95% CI **−1.35 to −0.34 pp**. The interval excludes zero, consistent with the z-test. Per 100,000 new players, this is roughly 340 to 1,350 fewer players active on day 7.
+- **Power and minimum detectable effect (α = 0.05 two-sided, power 80%, control baseline and actual group sizes):**
+
+| Metric | Control baseline | MDE | Relative MDE | Observed difference |
+|---|---:|---:|---:|---:|
+| D7 retention | 19.02% | 0.73 pp | 3.8% | −0.82 pp |
+| D1 retention | 44.82% | 0.93 pp | 2.1% | −0.59 pp |
+
+  The observed D7 drop is just above the detectable threshold. The D1 drop is below it, so the non-significant D1 result means the test could not reliably detect an effect of that size. It does **not** show that D1 was unaffected.
+- **Guardrail: game rounds in the first 14 days (outlier `userid` 6390605 excluded):** median 17 (`gate_30`) vs 16 (`gate_40`); mean 51.34 vs 51.30. No meaningful difference in engagement volume.
+- **D7 retention by 14-day game-round band (descriptive only):**
+
+| Rounds band | gate_30: players / D7 | gate_40: players / D7 | Difference |
+|---|---:|---:|---:|
+| 0 | 1,937 / 0.83% | 2,057 / 0.63% | −0.20 pp |
+| 1–29 | 26,107 / 4.51% | 26,819 / 4.18% | −0.33 pp |
+| 30–99 | 10,488 / 27.84% | 10,265 / 25.67% | **−2.17 pp** |
+| 100+ | 6,168 / 71.14% | 6,348 / 71.03% | −0.11 pp |
+
+  The D7 gap is concentrated among moderately engaged players (30–99 rounds), the band in which players could plausibly reach the first gate. **Caveat:** `sum_gamerounds` is measured after assignment and may itself be affected by the gate position, so players in the same band are not directly comparable across groups. Rounds are also not levels. This breakdown generates hypotheses for a follow-up test; it is not a causal estimate for any segment.
+
 ## Data sources
 
 - **Cookie Cats:** [Kaggle dataset "Mobile Games A/B Testing - Cookie Cats"](https://www.kaggle.com/datasets/mursideyarkin/mobile-games-ab-testing-cookie-cats), originally from DataCamp; the game is developed by Tactile Entertainment. The dataset page does not state explicit license terms, so the raw CSV is **not** included in this repository. To reproduce, download `cookie_cats.csv` from Kaggle into `ab-test-cookie-cats/data/`.
