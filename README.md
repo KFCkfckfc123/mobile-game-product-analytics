@@ -59,7 +59,7 @@ Source: `ab-test-cookie-cats/notebooks/01_ab_test_analysis.ipynb`, sections 4–
 
 | Rounds band | gate_30: players / D7 | gate_40: players / D7 | Difference |
 |---|---:|---:|---:|
-| 0 | 1,937 / 0.83% | 2,057 / 0.63% | −0.20 pp |
+| 0 | 1,937 / 0.83% | 2,057 / 0.63% | −0.19 pp |
 | 1–29 | 26,107 / 4.51% | 26,819 / 4.18% | −0.33 pp |
 | 30–99 | 10,488 / 27.84% | 10,265 / 25.67% | **−2.17 pp** |
 | 100+ | 6,168 / 71.14% | 6,348 / 71.03% | −0.11 pp |
