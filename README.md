@@ -66,9 +66,21 @@ Source: `ab-test-cookie-cats/notebooks/01_ab_test_analysis.ipynb`, sections 4–
 
   The D7 gap is concentrated among moderately engaged players (30–99 rounds), the band in which players could plausibly reach the first gate. **Caveat:** `sum_gamerounds` is measured after assignment and may itself be affected by the gate position, so players in the same band are not directly comparable across groups. Rounds are also not levels. This breakdown generates hypotheses for a follow-up test; it is not a causal estimate for any segment.
 
+### Cookie Cats: visualization (stage 4)
+
+Source: `ab-test-cookie-cats/notebooks/01_ab_test_analysis.ipynb`, section 9. Images in `ab-test-cookie-cats/results/`.
+
+![Retention difference with 95% bootstrap confidence intervals](ab-test-cookie-cats/results/fig1_retention_effect.png)
+
+**Figure 1.** The D7 interval (−1.35 to −0.34 pp) lies entirely below zero; the D1 interval (−1.24 to +0.05 pp) crosses it. The chart plots the difference itself because bars of two ~19% rates would hide a 0.8 pp gap, and a truncated axis would exaggerate it. The D1 interval is new in this stage; it uses the same bootstrap procedure and seed as D7 and agrees with the z-test (p = 0.074).
+
+![D7 retention by 14-day game-round band](ab-test-cookie-cats/results/fig2_d7_by_rounds_band.png)
+
+**Figure 2.** D7 retention rises steeply with engagement (under 1% for zero-round players, about 71% for 100+ rounds). The `gate_40` deficit is largest in the 30–99 band (−2.17 pp) and at most 0.33 pp elsewhere. Descriptive only, for the reasons noted in stage 3.
+
 ### Cookie Cats: decision
 
-Source: `ab-test-cookie-cats/notebooks/01_ab_test_analysis.ipynb`, section 9.
+Source: `ab-test-cookie-cats/notebooks/01_ab_test_analysis.ipynb`, section 10.
 
 **Recommendation: keep the first gate at level 30; do not roll out `gate_40`.** Moving the gate reduced D7 retention by 0.82 pp (95% CI 0.34 to 1.35 pp) without changing engagement volume.
 
