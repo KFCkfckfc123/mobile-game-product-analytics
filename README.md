@@ -97,6 +97,31 @@ Source: `retention-flood-it/sql/01_build_user_tables.sql` and `02_validate_user_
 - **Most users were already players before the export starts.** 9,086 users (60%) first opened the app before 2018-06-12: 5,810 in 2016–2017, 3,273 in 2018, plus 3 with implausible dates (one in 1970). Their first day in the export is not their install day, so they cannot form install cohorts. This is left-censoring.
 - **New-install cohort definition.** 6,089 users first opened the app inside the window. For 5,152 of them, first open falls within one day of their first logged event (the ±1 day reflects the gap between the UTC timestamp and the export's date field). The remaining 937 have first-open dates 2–105 days before any logged activity and are excluded from cohort retention. Retention analyses use these 5,152 users, with day 0 = first logged activity.
 
+### Flood-It: engagement and new-user retention (stage 2)
+
+Source: `retention-flood-it/sql/03`–`05`, results in `retention-flood-it/results/`, charts from `retention-flood-it/notebooks/01_engagement_retention.ipynb`.
+
+- **Engagement (all 15,175 users).** Average DAU was 518; average MAU (30-day window, from 2018-07-11) was 5,361; average DAU/MAU stickiness was 9.2% (range 5.3%–12.6%). On seven isolated days in late June and early July, DAU roughly doubled to about 1,200, then returned to normal the next day. Outside those days, DAU stayed between 346 and 644. The cause of the spikes was not investigated.
+
+![Daily and monthly active users](retention-flood-it/results/fig3_daily_active_users.png)
+
+- **Pooled day-N retention for new installs (95% Wilson CIs).** Most churn happens in the first day; the curve flattens after the first week.
+
+| Metric | Eligible users | Retention |
+|---|---:|---:|
+| D1 | 5,083 | 21.5% (20.4–22.7%) |
+| D7 | 4,798 | 5.5% (4.9–6.2%) |
+| D14 | 4,493 | 3.4% (2.9–4.0%) |
+| D30 | 3,676 | 1.9% (1.5–2.4%) |
+
+- **Retention by install month.** D1 was 27.2% (June), 24.8% (July), 22.7% (August), and **14.6% (September)**. September's D1 drop against August (−8.1 pp) is statistically significant (two-proportion z-test, p < 0.0001), as is its D7 drop (3.7% vs 6.0%, p = 0.006).
+
+![Retention curves by install month](retention-flood-it/results/fig4_retention_by_month.png)
+
+- **The spike days inflate retention.** June users whose day 1 fell on a spike day had D1 of 33.3% (423 users), against 22.7% for the other 565 June users. Excluding users whose day 1 fell on a spike day, pooled D1 is 20.4% and June D1 is 22.7%, in line with July and August. So the apparent month-over-month decline from June to August is largely an artifact, while September's drop remains.
+- **Not yet established:** what drove the September decline. A breakdown by platform, country, and app version is the next step.
+- **Not comparable with Cookie Cats.** The two games, player bases, and user selection differ, so their retention levels are not compared.
+
 ## Data sources
 
 - **Cookie Cats:** [Kaggle dataset "Mobile Games A/B Testing - Cookie Cats"](https://www.kaggle.com/datasets/mursideyarkin/mobile-games-ab-testing-cookie-cats), originally from DataCamp; the game is developed by Tactile Entertainment. The dataset page does not state explicit license terms, so the raw CSV is **not** included in this repository. To reproduce, download `cookie_cats.csv` from Kaggle into `ab-test-cookie-cats/data/`.
