@@ -89,6 +89,14 @@ Limitations that could change the decision:
 - **Borderline sample ratio** (p = 0.0086 against a pre-set 0.001 threshold; intended allocation undocumented).
 - **Short horizon:** only D1, D7, and 14-day game rounds are available.
 
+### Flood-It: data model and validation (stage 1)
+
+Source: `retention-flood-it/sql/01_build_user_tables.sql` and `02_validate_user_tables.sql`, run in BigQuery against `firebase-public-project.analytics_153293282.events_*`.
+
+- **Base tables:** `users` (one row per user) and `user_days` (one row per user per active day). `users` has 15,175 rows and 15,175 distinct IDs; `user_days` has 59,037 rows across all 114 days (2018-06-12 to 2018-10-03) and no duplicate user-days. No user is missing a platform (iOS 7,765, Android 7,410); 36 have no country.
+- **Most users were already players before the export starts.** 9,086 users (60%) first opened the app before 2018-06-12: 5,810 in 2016–2017, 3,273 in 2018, plus 3 with implausible dates (one in 1970). Their first day in the export is not their install day, so they cannot form install cohorts. This is left-censoring.
+- **New-install cohort definition.** 6,089 users first opened the app inside the window. For 5,152 of them, first open falls within one day of their first logged event (the ±1 day reflects the gap between the UTC timestamp and the export's date field). The remaining 937 have first-open dates 2–105 days before any logged activity and are excluded from cohort retention. Retention analyses use these 5,152 users, with day 0 = first logged activity.
+
 ## Data sources
 
 - **Cookie Cats:** [Kaggle dataset "Mobile Games A/B Testing - Cookie Cats"](https://www.kaggle.com/datasets/mursideyarkin/mobile-games-ab-testing-cookie-cats), originally from DataCamp; the game is developed by Tactile Entertainment. The dataset page does not state explicit license terms, so the raw CSV is **not** included in this repository. To reproduce, download `cookie_cats.csv` from Kaggle into `ab-test-cookie-cats/data/`.
