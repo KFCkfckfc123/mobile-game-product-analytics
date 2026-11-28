@@ -7,7 +7,7 @@ Two analyses of real mobile-game data, written the way a product analytics team 
 | Module | Data | Questions |
 |---|---|---|
 | [`ab-test-cookie-cats/`](ab-test-cookie-cats/) | Cookie Cats A/B test (90,189 players) | Should the first gate move from level 30 to level 40? Includes sample ratio mismatch check, power analysis, bootstrap confidence intervals, and a decision memo. |
-| [`retention-flood-it/`](retention-flood-it/) | Flood-It app events in BigQuery (5.7M events, 15,175 users) | How well do new players retain, where do they drop off, and what drives changes in retention? Includes cohort retention, a level-progression funnel, a metric root-cause memo, and an analysis of an in-app experiment. |
+| [`retention-flood-it/`](retention-flood-it/) | Flood-It app events in BigQuery (5.7M events, capped at 50,000 per day; 15,175 users) | How well do new players retain, where do they drop off, and what drives changes in retention? Includes cohort retention, a level-progression funnel, a metric root-cause memo, and an analysis of an in-app experiment. |
 
 This project builds on my [GA4 funnel analysis](https://github.com/KFCkfckfc123/ga4-ecommerce-funnel-analysis). That project measured session-level conversion; this one moves to user-level retention and experimentation on a different product.
 
@@ -114,13 +114,27 @@ Source: `retention-flood-it/sql/03`–`05`, results in `retention-flood-it/resul
 | D14 | 4,493 | 3.4% (2.9–4.0%) |
 | D30 | 3,676 | 1.9% (1.5–2.4%) |
 
-- **Retention by install month.** D1 was 27.2% (June), 24.8% (July), 22.7% (August), and **14.6% (September)**. September's D1 drop against August (−8.1 pp) is statistically significant (two-proportion z-test, p < 0.0001), as is its D7 drop (3.7% vs 6.0%, p = 0.006).
+- **Retention by install month.** D1 was 27.2% (June), 24.8% (July), 22.7% (August), and 14.6% (September). September's D1 drop against August (−8.1 pp) is statistically significant (two-proportion z-test, p < 0.0001), as is its D7 drop (3.7% vs 6.0%, p = 0.006). **Correction (stage 3): most of this drop is a measurement artifact of the export rather than a change in player behavior; see below.**
 
 ![Retention curves by install month](retention-flood-it/results/fig4_retention_by_month.png)
 
-- **The spike days inflate retention.** June users whose day 1 fell on a spike day had D1 of 33.3% (423 users), against 22.7% for the other 565 June users. Excluding users whose day 1 fell on a spike day, pooled D1 is 20.4% and June D1 is 22.7%, in line with July and August. So the apparent month-over-month decline from June to August is largely an artifact, while September's drop remains.
-- **Not yet established:** what drove the September decline. A breakdown by platform, country, and app version is the next step.
+- **The spike days inflate retention.** June users whose day 1 fell on a spike day had D1 of 33.3% (423 users), against 22.7% for the other 565 June users. Excluding users whose day 1 fell on a spike day, pooled D1 is 20.4% and June D1 is 22.7%, in line with July and August. So the apparent month-over-month decline from June to August is largely an artifact. Stage 3 shows that the spike days are themselves days on which the export's platform mix shifted sharply toward iOS.
 - **Not comparable with Cookie Cats.** The two games, player bases, and user selection differ, so their retention levels are not compared.
+
+### Flood-It: diagnosing the September drop (stage 3)
+
+Source: `retention-flood-it/sql/06_truncation_check.sql`, results in `retention-flood-it/results/daily_platform_mix.csv` and `retention_stable_days.csv`, chart from `retention-flood-it/notebooks/01_engagement_retention.ipynb` (section 4).
+
+- **Segment breakdown first.** Splitting August vs September new-user D1 (22.7% → 14.6%) by platform, the mix shift explains −1.1 pp and within-platform declines explain −6.9 pp (Android 23.8% → 14.3%, iOS 19.1% → 15.0%). By country, mix explains +0.2 pp and within-country declines −8.2 pp (United States 25.5% → 12.8%). Android stayed on the same app version (2.62) in both months, so a new release does not explain it.
+- **Existing players dropped at the same time.** Among users first seen 14+ days earlier, the share active again the next day was 44–48% in each of the four weeks from July 30 to Aug 26, then 34% (week of Sept 3) and 25% (week of Sept 10). A decline that hits new and established players in the same weeks points to measurement rather than onboarding.
+- **The export is capped at 50,000 events per day.** All 114 daily tables contain exactly 50,000 events. Android and iOS share that fixed budget. From Sept 2 to Sept 27, Android's share of events repeatedly collapsed (to as low as 10%, against 51%–77% on every day from July 2 to Sept 1), and Android users vanished from those days (for example, 87 Android users on Sept 2 vs about 280 on a typical day). Users who played on those days appear as churned.
+
+![Daily event cap and platform mix](retention-flood-it/results/fig5_daily_event_cap.png)
+
+- **Dose-response check (no threshold needed).** For new users from July 2 to Oct 2, Android users' D1 rises steadily with the Android share of events on their day 1: 10.2% (share < 0.20, 315 users), 12.3% (0.20–0.40), 17.1% (0.40–0.50), and 24.7% (≥ 0.50, 2,099 users). iOS users' D1 shows no such pattern (17.8% on days with share ≥ 0.50, 19.6% on days below 0.20). The cap explains the Android decline; iOS's September decline (19.1% → 15.0%) is smaller, not significant at the 5% level (z = −1.63), and is not explained by this mechanism.
+- **Stable-day check, with its sensitivity.** Counting a user only when day 0 and day 1 are both "stable" (Android share 0.50–0.78, the range on every day from July 2 to Sept 1), September D1 is 22.4% (16.3%–29.9%, 143 users) against August's 22.7%. The result depends on the threshold: with 0.40–0.80 it is 19.9% (206 users), and with ≥ 0.30 it is 15.4% (545 users), because days with a share of 0.30–0.50 still crowd out Android users. The dose-response check above is the stronger evidence.
+- **All activity and retention levels are affected.** Because every day is capped, players can be active without appearing in the data, so measured DAU and retention are best read as lower bounds. Restricted to stable days (day 0 and day N), pooled retention is D1 24.0% (22.4%–25.6%), D7 6.9% (6.0%–8.0%), D14 4.1% (3.4%–5.0%), and D30 2.8% (2.2%–3.6%), each higher than the unrestricted figures in stage 2. Stable days are still capped, so these are not true levels either.
+- **Not established:** the rule the export uses to select the 50,000 events. The stable-day threshold is based on July–August behavior, not on documentation.
 
 ## Data sources
 
