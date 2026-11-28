@@ -4,7 +4,7 @@ Two analyses of real mobile-game data, written the way a product analytics team 
 
 **Key results**
 - **Cookie Cats A/B test:** moving the first gate from level 30 to level 40 lowered D7 retention by 0.82 pp (95% bootstrap CI 0.34 to 1.35 pp) with no change in engagement, so the recommendation is to keep the gate at level 30.
-- **Flood-It retention (BigQuery):** an apparent September drop in new-user D1 (22.7% → 14.6%) was traced to the public export's cap of exactly 50,000 events per day, not to player behavior. Android users' D1 tracks how much of that daily cap Android received (10.2% on the most crowded-out days vs 24.7% on normal days). The stage 2 conclusion was corrected accordingly.
+- **Flood-It retention (BigQuery):** an apparent September drop in new-user D1 (22.7% → 14.6%) was traced mostly to the public export's cap of exactly 50,000 events per day rather than to player behavior. Android users' D1 tracks how much of that daily cap Android received (10.2% on the most crowded-out days vs 24.7% on normal days). The stage 2 conclusion was corrected accordingly.
 
 | Module | Data | Questions |
 |---|---|---|
