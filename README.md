@@ -1,19 +1,21 @@
 # Mobile Game Product Analytics: A/B Testing and Retention
 
-_Work in progress._
+Two analyses of real mobile-game data, written the way a product analytics team would report them.
 
-Two analyses of real mobile-game data, written the way a product analytics team would report them:
+**Key results**
+- **Cookie Cats A/B test:** moving the first gate from level 30 to level 40 lowered D7 retention by 0.82 pp (95% bootstrap CI 0.34 to 1.35 pp) with no change in engagement, so the recommendation is to keep the gate at level 30.
+- **Flood-It retention (BigQuery):** an apparent September drop in new-user D1 (22.7% → 14.6%) was traced to the public export's cap of exactly 50,000 events per day, not to player behavior. Android users' D1 tracks how much of that daily cap Android received (10.2% on the most crowded-out days vs 24.7% on normal days). The stage 2 conclusion was corrected accordingly.
 
 | Module | Data | Questions |
 |---|---|---|
-| [`ab-test-cookie-cats/`](ab-test-cookie-cats/) | Cookie Cats A/B test (90,189 players) | Should the first gate move from level 30 to level 40? Includes sample ratio mismatch check, power analysis, bootstrap confidence intervals, and a decision memo. |
-| [`retention-flood-it/`](retention-flood-it/) | Flood-It app events in BigQuery (5.7M events, capped at 50,000 per day; 15,175 users) | How well do new players retain, where do they drop off, and what drives changes in retention? Includes cohort retention, a level-progression funnel, a metric root-cause memo, and an analysis of an in-app experiment. |
+| [`ab-test-cookie-cats/`](ab-test-cookie-cats/) | Cookie Cats A/B test (90,189 players) | Should the first gate move from level 30 to level 40? Includes a sample ratio mismatch check, two-proportion z-tests, bootstrap confidence intervals, power and minimum detectable effect, a guardrail metric, segment analysis, and a decision with limitations. |
+| [`retention-flood-it/`](retention-flood-it/) | Flood-It app events in BigQuery (5.7M events, capped at 50,000 per day; 15,175 users) | How active are players, how well do new installs retain, and what explains a change in retention? Includes a user-level data model with left- and right-censoring rules, DAU/WAU/MAU and stickiness, day-N retention by install month with Wilson intervals, and a root-cause diagnosis of a retention drop (segment decomposition and a data-quality check). |
 
 This project builds on my [GA4 funnel analysis](https://github.com/KFCkfckfc123/ga4-ecommerce-funnel-analysis). That project measured session-level conversion; this one moves to user-level retention and experimentation on a different product.
 
 ## Findings
 
-Findings are added as each stage is completed. Only results from executed code are reported.
+Findings are reported stage by stage, in the order the work was done. Only results from executed code are reported, and later stages correct earlier ones where needed.
 
 ### Cookie Cats: data validation (stage 1)
 
@@ -152,7 +154,6 @@ retention-flood-it/
   sql/
   notebooks/
   results/
-dashboard/
 ```
 
 ## Setup
@@ -162,3 +163,10 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
+
+- **Cookie Cats:** download the CSV (see Data sources), then run `ab-test-cookie-cats/notebooks/01_ab_test_analysis.ipynb`.
+- **Flood-It:** run the SQL files in `retention-flood-it/sql/` in order in BigQuery, replacing `YOUR_PROJECT` with your own project ID; the notebook reads only the saved CSVs in `retention-flood-it/results/`.
+
+## Planned
+
+Not yet done: a level-progression funnel, a dashboard, and an analysis of the in-app experiments recorded in the Flood-It export.
