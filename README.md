@@ -114,7 +114,7 @@ Source: `retention-flood-it/sql/03`–`05`, results in `retention-flood-it/resul
 | D14 | 4,493 | 3.4% (2.9–4.0%) |
 | D30 | 3,676 | 1.9% (1.5–2.4%) |
 
-- **Retention by install month.** D1 was 27.2% (June), 24.8% (July), 22.7% (August), and 14.6% (September). September's D1 drop against August (−8.1 pp) is statistically significant (two-proportion z-test, p < 0.0001), as is its D7 drop (3.7% vs 6.0%, p = 0.006). **Correction (stage 3): this drop is a measurement artifact of the export, not a change in player behavior; see below.**
+- **Retention by install month.** D1 was 27.2% (June), 24.8% (July), 22.7% (August), and 14.6% (September). September's D1 drop against August (−8.1 pp) is statistically significant (two-proportion z-test, p < 0.0001), as is its D7 drop (3.7% vs 6.0%, p = 0.006). **Correction (stage 3): most of this drop is a measurement artifact of the export rather than a change in player behavior; see below.**
 
 ![Retention curves by install month](retention-flood-it/results/fig4_retention_by_month.png)
 
@@ -131,8 +131,9 @@ Source: `retention-flood-it/sql/06_truncation_check.sql`, results in `retention-
 
 ![Daily event cap and platform mix](retention-flood-it/results/fig5_daily_event_cap.png)
 
-- **Check: retention on stable days only.** Counting a user toward day N only when both day 0 and day N are stable days (Android share 0.50–0.78), September D1 is 22.4% (16.3%–29.9%, 143 users), in line with August's 22.7%. The sample is small, so this shows no evidence of a real September decline; it does not prove there was none.
-- **All activity and retention levels are affected.** Because every day is capped, players can be active without appearing in the data, so measured DAU and retention are best read as lower bounds. Restricted to stable days, pooled retention is D1 24.0% (22.4%–25.6%), D7 6.9% (6.0%–8.0%), D14 4.1% (3.4%–5.0%), and D30 2.8% (2.2%–3.6%), each higher than the unrestricted figures in stage 2. Stable days are still capped, so these are not true levels either.
+- **Dose-response check (no threshold needed).** For new users from July 2 to Oct 2, Android users' D1 rises steadily with the Android share of events on their day 1: 10.2% (share < 0.20, 315 users), 12.3% (0.20–0.40), 17.1% (0.40–0.50), and 24.7% (≥ 0.50, 2,099 users). iOS users' D1 shows no such pattern (17.8% on days with share ≥ 0.50, 19.6% on days below 0.20). The cap explains the Android decline; iOS's September decline (19.1% → 15.0%) is smaller, not significant at the 5% level (z = −1.63), and is not explained by this mechanism.
+- **Stable-day check, with its sensitivity.** Counting a user only when day 0 and day 1 are both "stable" (Android share 0.50–0.78, the range on every day from July 2 to Sept 1), September D1 is 22.4% (16.3%–29.9%, 143 users) against August's 22.7%. The result depends on the threshold: with 0.40–0.80 it is 19.9% (206 users), and with ≥ 0.30 it is 15.4% (545 users), because days with a share of 0.30–0.50 still crowd out Android users. The dose-response check above is the stronger evidence.
+- **All activity and retention levels are affected.** Because every day is capped, players can be active without appearing in the data, so measured DAU and retention are best read as lower bounds. Restricted to stable days (day 0 and day N), pooled retention is D1 24.0% (22.4%–25.6%), D7 6.9% (6.0%–8.0%), D14 4.1% (3.4%–5.0%), and D30 2.8% (2.2%–3.6%), each higher than the unrestricted figures in stage 2. Stable days are still capped, so these are not true levels either.
 - **Not established:** the rule the export uses to select the 50,000 events. The stable-day threshold is based on July–August behavior, not on documentation.
 
 ## Data sources
